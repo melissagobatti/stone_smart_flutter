@@ -1,49 +1,28 @@
 package com.qztech.stone_smart_flutter;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.annotation.NonNull;
-import com.qztech.stone_smart_flutter.core.StoneSmart;
-import com.qztech.stone_smart_flutter.payments.PaymentsFragment;
-import com.qztech.stone_smart_flutter.payments.PaymentsPresenter;
-import com.qztech.stone_smart_flutter.payments.PaymentsUseCase;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.common.MethodCall;
 
-public class StoneSmartFlutterPlugin
-  implements FlutterPlugin, MethodCallHandler {
-
-  private static final String CHANNEL_NAME = "stone_smart_flutter";
+/** StoneSmartFlutterPlugin */
+public class StoneSmartFlutterPlugin implements FlutterPlugin, MethodCallHandler {
   private MethodChannel channel;
-  private Context context;
-  private StoneSmart stoneSmart;
-
-  public StoneSmartFlutterPlugin() {}
 
   @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    channel = new MethodChannel(binding.getBinaryMessenger(), CHANNEL_NAME);
-    //Get context to application
-    context = binding.getApplicationContext();
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "stone_smart_flutter");
     channel.setMethodCallHandler(this);
-    //Create instance to Stone Smart class
-    stoneSmart = new StoneSmart(context, channel);
   }
 
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    //Function responsible for listening to methods called by flutter
-    if (call.method.startsWith("payment")) {
-      stoneSmart.initPayment(call, result);
+    // Implemente aqui os métodos que o plugin deve responder
+    if (call.method.equals("getPlatformVersion")) {
+      result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else {
       result.notImplemented();
     }
@@ -51,10 +30,9 @@ public class StoneSmartFlutterPlugin
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    //Dispose plugin
-    channel.setMethodCallHandler(null);
-    channel = null;
-    stoneSmart.dispose();
-    stoneSmart = null;
+    if (channel != null) {
+      channel.setMethodCallHandler(null);
+      channel = null;
+    }
   }
 }
