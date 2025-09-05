@@ -155,6 +155,11 @@ public class StoneSmart {
         }
     }
 
+    public void print(String text, MethodChannel.Result result) {
+        // Implemente a lógica de impressão aqui, ou apenas um retorno de sucesso para teste
+        result.success("Print chamado com texto: " + text);
+    }
+
     public void dispose() {
         if (this.payment != null) {
             this.payment.dispose();
